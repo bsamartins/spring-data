@@ -1,11 +1,13 @@
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
         maven { url "https://repo.spring.io/snapshot" }
         maven { url "https://repo.spring.io/milestone" }
     }
     dependencies {
         classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.3'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
     }
 }
 
@@ -24,6 +26,7 @@ subprojects {
     apply plugin: 'org.junit.platform.gradle.plugin'
     apply plugin: 'jacoco'
     apply plugin: 'maven-publish'
+    apply plugin: 'com.jfrog.bintray'
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
@@ -35,5 +38,18 @@ subprojects {
 
     jacoco {
         toolVersion = "0.7.9"
+    }
+
+    bintray {
+        user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+        key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+        pkg {
+            repo = 'maven'
+            userOrg = user
+            licenses = ['Apache-2.0']
+            vcsUrl = 'https://github.com/bsamartins/spring-data.git'
+            labels = ['spring', 'spring-data', 'mongo', 'reactive', 'gridfs']
+            publicDownloadNumbers = true
+        }
     }
 }

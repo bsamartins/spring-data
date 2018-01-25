@@ -23,7 +23,7 @@ task sourceJar(type: Jar) {
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        mavenPub(MavenPublication) {
             from components.java
 
             artifact sourceJar {
@@ -32,3 +32,7 @@ publishing {
         }
     }
 }
+
+bintray.publications = ['mavenPub']
+bintray.pkg.name = 'spring-data-mongo'
+
