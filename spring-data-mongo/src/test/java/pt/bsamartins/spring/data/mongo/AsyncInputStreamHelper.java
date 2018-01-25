@@ -1,4 +1,4 @@
-package org.bsamartins.spring.data.mongo;
+package pt.bsamartins.spring.data.mongo;
 
 import com.mongodb.reactivestreams.client.Success;
 import com.mongodb.reactivestreams.client.gridfs.AsyncInputStream;

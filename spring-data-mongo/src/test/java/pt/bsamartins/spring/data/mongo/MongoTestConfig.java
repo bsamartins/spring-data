@@ -1,4 +1,4 @@
-package org.bsamartins.spring.data.mongo;
+package pt.bsamartins.spring.data.mongo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

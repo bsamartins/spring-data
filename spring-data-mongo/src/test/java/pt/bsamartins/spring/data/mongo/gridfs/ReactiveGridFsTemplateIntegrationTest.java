@@ -1,10 +1,10 @@
-package org.bsamartins.spring.data.mongo.gridfs;
+package pt.bsamartins.spring.data.mongo.gridfs;
 
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.reactivestreams.client.gridfs.AsyncInputStream;
-import org.bsamartins.spring.data.mongo.AsyncInputStreamHelper;
-import org.bsamartins.spring.data.mongo.MongoTestConfig;
-import org.bsamartins.spring.data.mongo.ReactiveMongoTestConfig;
+import pt.bsamartins.spring.data.mongo.AsyncInputStreamHelper;
+import pt.bsamartins.spring.data.mongo.MongoTestConfig;
+import pt.bsamartins.spring.data.mongo.ReactiveMongoTestConfig;
 import org.bson.BsonObjectId;
 import org.bson.Document;
 import org.bson.types.ObjectId;

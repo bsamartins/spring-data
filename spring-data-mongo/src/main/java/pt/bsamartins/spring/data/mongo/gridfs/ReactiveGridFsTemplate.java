@@ -1,4 +1,4 @@
-package org.bsamartins.spring.data.mongo.gridfs;
+package pt.bsamartins.spring.data.mongo.gridfs;
 
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
