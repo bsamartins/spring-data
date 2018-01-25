@@ -17,10 +17,18 @@ dependencies {
     runtime('org.mongodb:mongo-java-driver:3.6.1')
 }
 
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
         }
     }
 }
