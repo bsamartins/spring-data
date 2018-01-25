@@ -4,17 +4,36 @@ buildscript {
         maven { url "https://repo.spring.io/snapshot" }
         maven { url "https://repo.spring.io/milestone" }
     }
+    dependencies {
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.3'
+    }
 }
 
 plugins {
     id "io.spring.dependency-management" version "1.0.4.RELEASE"
 }
 
+ext {
+    springVersion = "5.0.2.RELEASE"
+    springDataVersion = "2.0.2.RELEASE"
+    junitVersion = "5.0.3"
+}
+
 subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.junit.platform.gradle.plugin'
+    apply plugin: 'jacoco'
     apply plugin: 'maven-publish'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
     repositories {
         mavenCentral()
         jcenter()
+    }
+
+    jacoco {
+        toolVersion = "0.7.9"
     }
 }

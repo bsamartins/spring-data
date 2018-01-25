@@ -1,19 +1,4 @@
-/*
- * Copyright 2011-2017 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package com.github.bsamartins.spring.data.mongo.gridfs;
+package org.bsamartins.spring.data.mongo.gridfs;
 
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
@@ -21,7 +6,6 @@ import com.mongodb.reactivestreams.client.MongoDatabase;
 import com.mongodb.reactivestreams.client.gridfs.AsyncInputStream;
 import com.mongodb.reactivestreams.client.gridfs.GridFSBucket;
 import com.mongodb.reactivestreams.client.gridfs.GridFSBuckets;
-import com.mongodb.reactivestreams.client.gridfs.GridFSDownloadStream;
 import org.bson.BsonObjectId;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -31,7 +15,7 @@ import org.springframework.data.mongodb.ReactiveMongoDatabaseFactory;
 import org.springframework.data.mongodb.core.convert.MongoConverter;
 import org.springframework.data.mongodb.core.convert.QueryMapper;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.gridfs.AntPathAdapter;
+import org.springframework.data.mongodb.gridfs.AntPathExtension;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -87,55 +71,31 @@ public class ReactiveGridFsTemplate implements ReactiveGridFsOperations {
 		this.queryMapper = new QueryMapper(converter);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.github.bsamartins.spring.data.mongo.gridfs.ReactiveGridFsOperations#store(com.mongodb.reactivestreams.client.gridfs.AsyncInputStream, java.lang.String)
-	 */
 	@Override
 	public Mono<ObjectId> store(AsyncInputStream content, String filename) {
 		return store(content, filename, (Object) null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.github.bsamartins.spring.data.mongo.gridfs.ReactiveGridFsOperations#store(com.mongodb.reactivestreams.client.gridfs.AsyncInputStream, java.lang.Object)
-	 */
 	@Override
 	public Mono<ObjectId> store(AsyncInputStream content, @Nullable Object metadata) {
 		return store(content, null, metadata);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.github.bsamartins.spring.data.mongo.gridfs.ReactiveGridFsOperations#store(com.mongodb.reactivestreams.client.gridfs.AsyncInputStream, com.mongodb.Document)
-	 */
 	@Override
 	public Mono<ObjectId> store(AsyncInputStream content, @Nullable Document metadata) {
 		return store(content, null, metadata);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.github.bsamartins.spring.data.mongo.gridfs.ReactiveGridFsOperations#store(com.mongodb.reactivestreams.client.gridfs.AsyncInputStream, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public Mono<ObjectId> store(AsyncInputStream content, @Nullable String filename, @Nullable String contentType) {
 		return store(content, filename, contentType, (Object) null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.github.bsamartins.spring.data.mongo.gridfs.ReactiveGridFsOperations#store(com.mongodb.reactivestreams.client.gridfs.AsyncInputStream, java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public Mono<ObjectId> store(AsyncInputStream content, @Nullable String filename, @Nullable Object metadata) {
 		return store(content, filename, null, metadata);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.github.bsamartins.spring.data.mongo.gridfs.ReactiveGridFsOperations#store(com.mongodb.reactivestreams.client.gridfs.AsyncInputStream, java.lang.String, java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public Mono<ObjectId> store(AsyncInputStream content, @Nullable String filename, @Nullable String contentType, @Nullable Object metadata) {
 
@@ -164,7 +124,7 @@ public class ReactiveGridFsTemplate implements ReactiveGridFsOperations {
 		Document mData = new Document();
 
 		if (StringUtils.hasText(contentType)) {
-			mData.put(GridsFSHeaderConstants.CONTENT_TYPE_FIELD, contentType);
+			mData.put(GridsFsHeaderConstants.CONTENT_TYPE_FIELD, contentType);
 		}
 
 		if (metadata != null) {
@@ -174,7 +134,7 @@ public class ReactiveGridFsTemplate implements ReactiveGridFsOperations {
 		options.metadata(mData);
 
 		return Mono.from(getGridFs().uploadFromStream(filename, content, options))
-				.doOnNext(id -> LOGGER.info("Saved file with id: {}", id));
+				.doOnNext(id -> LOGGER.info("Saved file `{}` with id `{}`", filename, id));
 	}
 
 	@Override
@@ -200,23 +160,23 @@ public class ReactiveGridFsTemplate implements ReactiveGridFsOperations {
 	}
 
 	@Override
-	public Mono<GridFSDownloadStream> getResource(String location) {
+	public Mono<ReactiveGridFsResource> getResource(String location) {
 		return findOne(query(whereFilename().is(location)))
-				.map(file -> getGridFs().openDownloadStream(location));
+				.map(file -> new ReactiveGridFsResource(file, getGridFs().openDownloadStream(file.getFilename())));
 	}
 
 	@Override
-	public Flux<GridFSDownloadStream> getResources(String locationPattern) {
+	public Flux<ReactiveGridFsResource> getResources(String locationPattern) {
 
 		if (!StringUtils.hasText(locationPattern)) {
 			return Flux.empty();
 		}
 
-		AntPathAdapter path = new AntPathAdapter(locationPattern);
+		AntPathExtension path = new AntPathExtension(locationPattern);
 
 		if (path.isPattern()) {
 			return find(query(whereFilename().regex(path.toRegex())))
-					.map(file -> getGridFs().openDownloadStream(file.getFilename()));
+					.map(file -> new ReactiveGridFsResource(file, getGridFs().openDownloadStream(file.getFilename())));
 		}
 
 		return getResource(locationPattern).flux();

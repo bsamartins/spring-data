@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.bsamartins.spring.data.mongo.gridfs;
+package org.bsamartins.spring.data.mongo.gridfs;
 
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.reactivestreams.client.gridfs.AsyncInputStream;
@@ -150,7 +150,7 @@ public interface ReactiveGridFsOperations {
 	 * @param filename must not be {@literal null}.
 	 * @return the resource if it exists or an empty {@link Mono}.
 	 */
-	Mono<GridFSDownloadStream> getResource(String filename);
+	Mono<ReactiveGridFsResource> getResource(String filename);
 
 	/**
 	 * Returns all {@link GridFSDownloadStream}s matching the given file name pattern.
@@ -158,5 +158,5 @@ public interface ReactiveGridFsOperations {
 	 * @param filenamePattern must not be {@literal null}.
 	 * @return
 	 */
-	Flux<GridFSDownloadStream> getResources(String filenamePattern);
+	Flux<ReactiveGridFsResource> getResources(String filenamePattern);
 }
