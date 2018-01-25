@@ -7,3 +7,9 @@ services:
   - docker
 
 script: ./gradlew check
+
+deploy:
+  - provider: script
+    script: ./gradlew publish
+    on:
+      branch: master
