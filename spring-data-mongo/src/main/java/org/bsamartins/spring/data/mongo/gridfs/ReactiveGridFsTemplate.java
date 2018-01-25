@@ -57,7 +57,7 @@ public class ReactiveGridFsTemplate implements ReactiveGridFsOperations {
 	 * 
 	 * @param reactiveMongoDatabaseFactory must not be {@literal null}.
 	 * @param converter must not be {@literal null}.
-	 * @param bucket
+	 * @param bucket optional parameter
 	 */
 	public ReactiveGridFsTemplate(ReactiveMongoDatabaseFactory reactiveMongoDatabaseFactory, MongoConverter converter, String bucket) {
 

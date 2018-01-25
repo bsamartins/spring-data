@@ -132,7 +132,7 @@ public interface ReactiveGridFsOperations {
 	 * case no file matches.
 	 *
 	 * @param query must not be {@literal null}.
-	 * @return
+	 * @return Returns first element if query matches multiple results or none if no match
 	 */
 	@Nullable
 	Mono<GridFSFile> findOne(Query query);
@@ -141,6 +141,7 @@ public interface ReactiveGridFsOperations {
 	 * Deletes all files matching the given {@link Query}.
 	 *
 	 * @param query must not be {@literal null}.
+	 * @return delete result
 	 */
 	Mono<Void> delete(Query query);
 
@@ -156,7 +157,7 @@ public interface ReactiveGridFsOperations {
 	 * Returns all {@link GridFSDownloadStream}s matching the given file name pattern.
 	 *
 	 * @param filenamePattern must not be {@literal null}.
-	 * @return
+	 * @return Stream of resources
 	 */
 	Flux<ReactiveGridFsResource> getResources(String filenamePattern);
 }
