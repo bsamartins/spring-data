@@ -1,8 +1,9 @@
+sudo: required
 language: java
+jdk:
+ - oraclejdk8
 
 services:
   - docker
-
-sudo: required
 
 script: ./gradlew check
