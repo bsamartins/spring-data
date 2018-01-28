@@ -10,7 +10,7 @@ script: ./gradlew check
 
 deploy:
   - provider: script
-    script: ./gradlew publish
+    script: ./gradlew bintrayUpload
     on:
       tags: true
       condition: "$TRAVIS_TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+\.RELEASE$"
